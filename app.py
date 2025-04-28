@@ -1,31 +1,39 @@
 import faicons as fa
 import plotly.express as px
+import pandas as pd
 
 # Load data and compute static values
-from shared import app_dir, tips
+from shared import app_dir, tips, groupme
 from shiny import reactive, render
 from shiny.express import input, ui
 from shinywidgets import render_plotly
+from GroupMe_DataBoard import df_message, df_users_unique
+
 
 bill_rng = (min(tips.total_bill), max(tips.total_bill))
 
+df_dates = pd.DataFrame(df_message['created_at'])
+df_dates['created_at'] = pd.to_datetime(df_dates['created_at']).dt.date
+date_rng = (df_dates['created_at'].min(), df_dates['created_at'].max())
+# --------------------------------------------------------
+
+
 # Add page title and sidebar
-ui.page_opts(title="Restaurant tipping", fillable=True)
+ui.page_opts(title="GroupMe", fillable=True)
 
 with ui.sidebar(open="desktop"):
     ui.input_slider(
         "total_bill",
-        "Bill amount",
-        min=bill_rng[0],
-        max=bill_rng[1],
-        value=bill_rng,
-        pre="$",
+        "Date Range",
+        min=date_rng[0],
+        max=date_rng[1],
+        value=date_rng
     )
     ui.input_checkbox_group(
         "time",
-        "Food service",
-        ["Lunch", "Dinner"],
-        selected=["Lunch", "Dinner"],
+        "Graphed Elements",
+        ["Messages", "Likes"],
+        selected=["Messages", "Likes"],
         inline=True,
     )
     ui.input_action_button("reset", "Reset filter")
@@ -45,6 +53,7 @@ with ui.layout_columns(fill=False):
         @render.express
         def total_tippers():
             tips_data().shape[0]
+            
 
     with ui.value_box(showcase=ICONS["wallet"]):
         "Average tip"
@@ -153,9 +162,18 @@ def tips_data():
     idx2 = tips.time.isin(input.time())
     return tips[idx1 & idx2]
 
+@reactive.calc
+def groupme_data():
+    m_total = input.df_message()
+    m_total = df_message.groupby("name").agg(
+        message_count=("message_count", "sum"),
+        favorite_count=("favorite_count", "sum"),
+    ).reset_index()
+    return m_total
+
 
 @reactive.effect
 @reactive.event(input.reset)
 def _():
-    ui.update_slider("total_bill", value=bill_rng)
-    ui.update_checkbox_group("time", selected=["Lunch", "Dinner"])
+    ui.update_slider("total_bill", value=date_rng)
+    ui.update_checkbox_group("time", selected=["Messages", "Likes"])
