@@ -75,6 +75,24 @@ df_users_unique = df_users_unique.merge(df_favorite_count, on='user_id')
 df_users_unique['Average Likes Per Message'] = df_users_unique['favorite_count'] / df_users_unique['message_count']
 
 
+def export_to_csv(df, file_path):
+    """
+    Exports the given DataFrame to a CSV file.
+
+    Parameters:
+    df (pd.DataFrame): The DataFrame to export.
+    file_path (str): The file path where the CSV will be saved.
+    """
+    try:
+        df.to_csv(file_path, index=False, encoding='utf-8')
+        print(f"DataFrame successfully exported to {file_path}")
+    except Exception as e:
+        print(f"An error occurred while exporting the DataFrame: {e}")
+
+# Example usage
+# export_to_csv(df_message, r"C:\Users\kyleg\OneDrive\Python\GroupMe DataBoard\exported_messages.csv")
+
+ 
 ### MATPLOTLIB PLOT ###
 def PlotImage(DateRange): # DateRange is a list of dates
 
