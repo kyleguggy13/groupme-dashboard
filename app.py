@@ -7,12 +7,12 @@ from shared import app_dir, tips, groupme
 from shiny import reactive, render
 from shiny.express import input, ui
 from shinywidgets import render_plotly
-from GroupMe_DataBoard import df_message, df_users_unique
+# from GroupMe_DataBoard import df_message, df_users_unique
 
 
 bill_rng = (min(tips.total_bill), max(tips.total_bill))
 
-df_dates = pd.DataFrame(df_message['created_at'])
+df_dates = pd.DataFrame(groupme['created_at'])
 df_dates['created_at'] = pd.to_datetime(df_dates['created_at']).dt.date
 date_rng = (df_dates['created_at'].min(), df_dates['created_at'].max())
 # --------------------------------------------------------
