@@ -92,65 +92,8 @@ def export_to_csv(df, file_path):
 # Example usage
 # export_to_csv(df_message, r"C:\Users\kyleg\OneDrive\Python\GroupMe DataBoard\exported_messages.csv")
 
- 
-### MATPLOTLIB PLOT ###
-def PlotImage(DateRange): # DateRange is a list of dates
-
-    fig = plt.figure(figsize=(40,16))
-    ax = fig.add_subplot(111)
 
 
-    for x in DateRange:
-        dates = df_message.loc[df_message['ceated_at']==x]
-        
-        dateMAX = dates['boiler 1 (pph)'].max()
-        dateMAXrow = dates.loc[dates['boiler 1 (pph)']==dateMAX]
-        
-        dateMIN = dates['boiler 1 (pph)'].min()
-        dateMINrow = dates.loc[dates['boiler 1 (pph)']==dateMIN]
-
-
-        if (x % 2) == 0:
-            rgb_B1 = 'red'
-            rgb_B2 = 'indigo'
-            rgb_B3 = 'lime'
-        else:
-            rgb_B1 = 'darkorange'
-            rgb_B2 = 'blue'
-            rgb_B3 = 'green'
-        
-        ax.scatter(dates['Date/Time'],dates['boiler 1 (pph)'], s=1, c=rgb_B1, label='boiler 1 (pph)')
-        ax.scatter(dates['Date/Time'],dates['boiler 2 (pph)'], s=1, c=rgb_B2, label='boiler 2 (pph)')
-        ax.scatter(dates['Date/Time'],dates['boiler 3 (pph)'], s=1, c=rgb_B3, label='boiler 3 (pph)')
-        ax.scatter(dateMAXrow['Date/Time'], dateMAXrow['boiler 1 (pph)'], s=20, c='magenta', label='MAX: boiler 1 (pph)')
-        ax.scatter(dateMINrow['Date/Time'], dateMINrow['boiler 1 (pph)'], s=20, c='magenta', label='MIN: boiler 1 (pph)')
-
-
-    labelList = ['boiler 1 (pph): orange','boiler 2 (pph): blue','boiler 3 (pph): green','MAX Per Day (boiler 1): magenta',
-                 'MIN Per Day (boiler 1): magenta','boiler 1 (pph): red','boiler 2 (pph): indigo','boiler 3 (pph): lime']
-
-
-    # ax.scatter(df_Data['Date/Time'],MAX, s=3, c='b', label='MAX')
-    # ax.scatter(df_Data['Date/Time'],MIN, s=3, c='b', label='MIN')
-    ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
-    ax.xaxis.set_minor_locator(mdates.DayLocator())
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(200))
-    ax.grid(True)
-    ax.set_ylabel('pph')
-    ax.set_ylim(bottom=0)
-
-    ax.legend(labels=labelList, loc='upper left')
-
-
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    # fig.autofmt_xdate(rotation=45)
-
-    image_val = fig.autofmt_xdate(rotation=45)
-
-    return image_val
-
-
-# DateRangeAll = PlotImage(df_message)
 
 
 ### SEABORN PLOT ###
@@ -177,32 +120,3 @@ def seabornplot(df_data):
 
 
 # seabornplot(df_users_unique)
-
-
-### SEABORN EXAMPLE ###
-def seaborn_example():
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-    sns.set_theme(style="whitegrid")
-
-    # Initialize the matplotlib figure
-    f, ax = plt.subplots(figsize=(6, 15))
-
-    # Load the example car crash dataset
-    crashes = sns.load_dataset("car_crashes").sort_values("total", ascending=False)
-
-    # Plot the total crashes
-    sns.set_color_codes("pastel")
-    sns.barplot(x="total", y="abbrev", data=crashes,
-                label="Total", color="b")
-
-    # Plot the crashes where alcohol was involved
-    sns.set_color_codes("muted")
-    sns.barplot(x="alcohol", y="abbrev", data=crashes,
-                label="Alcohol-involved", color="b")
-
-    # Add a legend and informative axis label
-    ax.legend(ncol=2, loc="lower right", frameon=True)
-    ax.set(xlim=(0, 24), ylabel="",
-        xlabel="Automobile collisions per billion miles")
-    sns.despine(left=True, bottom=True)
