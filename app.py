@@ -164,12 +164,12 @@ def tips_data():
 
 @reactive.calc
 def groupme_data():
-    m_total = input.df_message()
-    m_total = df_message.groupby("name").agg(
+    msg_total = input.groupme()
+    msg_total = groupme.groupby("name").agg(
         message_count=("message_count", "sum"),
         favorite_count=("favorite_count", "sum"),
     ).reset_index()
-    return m_total
+    return msg_total
 
 
 @reactive.effect
