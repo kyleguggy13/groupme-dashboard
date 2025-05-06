@@ -53,6 +53,7 @@ with ui.layout_columns(fill=False):
         @render.express
         def total_tippers():
             tips_data().shape[0]
+            groupme_data().shape[0]
             
 
     with ui.value_box(showcase=ICONS["wallet"]):
