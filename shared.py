@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 
 app_dir = Path(__file__).parent
-groupme = pd.read_json(app_dir / "message.json")
+groupme = pd.read_json(app_dir / "exported_messages.csv")
+forbidden_users = pd.read_csv(app_dir / "forbidden_user_ids.csv")
 
 def show_values(axs, orient="v", space=.01):
     def _single(ax):

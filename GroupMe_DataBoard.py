@@ -8,19 +8,23 @@ import matplotlib.colors as mcolors
 import matplotlib.ticker as ticker
 from pandas.plotting import register_matplotlib_converters
 import seaborn as sns
+from shared import app_dir, groupme, forbidden_users
 
 
-message = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\GroupMe Export\00001\11739362\message.json"  
+df_message = groupme
+df_forbidden_users = forbidden_users
+
+# message = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\GroupMe Export\00001\11739362\message.json"  
 # conversation = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\GroupMe Export\00001\11739362\conversation.json"
 # likes_everyone = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\GroupMe Export\00001\11739362\likes\everyone.json"
-forbidden_users = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\forbidden_user_ids.csv"
+# forbidden_users = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\forbidden_user_ids.csv"
 
 
 
-df_message = pd.read_json(message)
+# df_message = pd.read_json(message)
 # df_conversation = pd.read_json(conversation)
 # df_likes_everyone = pd.read_json(likes_everyone)
-df_forbidden_users = pd.read_csv(forbidden_users)
+# df_forbidden_users = pd.read_csv(forbidden_users)
 
 
 df_message[['user_id', 'id']] = df_message[['user_id', 'id']].astype(str)
