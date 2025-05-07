@@ -1,78 +1,180 @@
-from shiny import App, ui, render, reactive
-import pandas as pd
+import faicons as fa
 import plotly.express as px
+import pandas as pd
 
-# Load and preprocess data
-df = pd.read_csv(r"C:\Users\kyleg\OneDrive\Python\GroupMe DataBoard\exported_messages.csv")
-df["favorite_count"] = pd.to_numeric(df["favorite_count"], errors="coerce")
-df["created_at"] = pd.to_datetime(df["created_at"], errors="coerce")
+# Load data and compute static values
+from shared import app_dir, tips, groupme
+from shiny import reactive, render
+from shiny.express import input, ui
+from shinywidgets import render_plotly
+# from GroupMe_DataBoard import df_message, df_users_unique
 
-# Define the summary function
-def get_summary(data):
-    summary = data.groupby("name", as_index=False).agg(
-        total_messages=("id", "count"),
-        total_favorites=("favorite_count", "sum")
+
+bill_rng = (min(tips.total_bill), max(tips.total_bill))
+
+df_dates = pd.DataFrame(groupme['created_at'])
+df_dates['created_at'] = pd.to_datetime(df_dates['created_at']).dt.date
+date_rng = (df_dates['created_at'].min(), df_dates['created_at'].max())
+# --------------------------------------------------------
+
+
+# Add page title and sidebar
+ui.page_opts(title="GroupMe", fillable=True)
+
+with ui.sidebar(open="desktop"):
+    ui.input_slider(
+        "total_bill",
+        "Date Range",
+        min=date_rng[0],
+        max=date_rng[1],
+        value=date_rng
     )
-    summary.dropna(subset=["name"], inplace=True)
-    return summary
+    ui.input_checkbox_group(
+        "time",
+        "Graphed Elements",
+        ["Messages", "Likes"],
+        selected=["Messages", "Likes"],
+        inline=True,
+    )
+    ui.input_action_button("reset", "Reset filter")
 
-# UI
-app_ui = ui.page_fluid(
-    ui.h2("GroupMe Messages: User Activity Dashboard"),
-    
-    ui.input_date_range(
-        "date_range",
-        "Filter by Date Range",
-        start=df["created_at"].min().date(),
-        end=df["created_at"].max().date()
-    ),
-    
-    ui.input_selectize(
-        "selected_users",
-        "Select Users",
-        choices=list(df["name"].dropna().unique()),
-        multiple=True,
-        selected=list(df["name"].dropna().unique())[:5]
-    ),
-    
-    ui.output_plot("user_bar_chart"),
-    ui.output_table("user_table")
-)
+# Add main content
+ICONS = {
+    "user": fa.icon_svg("user", "regular"),
+    "wallet": fa.icon_svg("wallet"),
+    "currency-dollar": fa.icon_svg("dollar-sign"),
+    "ellipsis": fa.icon_svg("ellipsis"),
+}
 
-# Server
-def server(input, output, session):
+with ui.layout_columns(fill=False):
+    with ui.value_box(showcase=ICONS["user"]):
+        "Total tippers"
 
-    @reactive.calc
-    def filtered_data():
-        # Filter by date range
-        mask = (df["created_at"].dt.date >= input.date_range()[0]) & \
-               (df["created_at"].dt.date <= input.date_range()[1])
-        return df[mask]
+        @render.express
+        def total_tippers():
+            tips_data().shape[0]
+            groupme_data().shape[0]
+            
 
-    @reactive.calc
-    def filtered_summary():
-        data = filtered_data()
-        selected = input.selected_users()
-        filtered = data[data["name"].isin(selected)] if selected else data.iloc[0:0]
-        return get_summary(filtered)
+    with ui.value_box(showcase=ICONS["wallet"]):
+        "Average tip"
 
-    @output
-    @render.plot
-    def user_bar_chart():
-        df_melted = filtered_summary().melt(
-            id_vars="name", 
-            value_vars=["total_messages", "total_favorites"],
-            var_name="Metric", value_name="Count"
-        )
-        fig = px.bar(df_melted, x="name", y="Count", color="Metric", barmode="group",
-                     title="Messages and Favorites per User")
-        fig.update_layout(xaxis_title="User", yaxis_title="Count")
-        return fig
+        @render.express
+        def average_tip():
+            d = tips_data()
+            if d.shape[0] > 0:
+                perc = d.tip / d.total_bill
+                f"{perc.mean():.1%}"
 
-    @output
-    @render.table
-    def user_table():
-        return filtered_summary()
+    with ui.value_box(showcase=ICONS["currency-dollar"]):
+        "Average bill"
 
-# Run the app
-app = App(app_ui, server)
+        @render.express
+        def average_bill():
+            d = tips_data()
+            if d.shape[0] > 0:
+                bill = d.total_bill.mean()
+                f"${bill:.2f}"
+
+
+with ui.layout_columns(col_widths=[6, 6, 12]):
+    with ui.card(full_screen=True):
+        ui.card_header("Tips data")
+
+        @render.data_frame
+        def table():
+            return render.DataGrid(tips_data())
+
+    with ui.card(full_screen=True):
+        with ui.card_header(class_="d-flex justify-content-between align-items-center"):
+            "Total bill vs tip"
+            with ui.popover(title="Add a color variable", placement="top"):
+                ICONS["ellipsis"]
+                ui.input_radio_buttons(
+                    "scatter_color",
+                    None,
+                    ["none", "sex", "smoker", "day", "time"],
+                    inline=True,
+                )
+
+        @render_plotly
+        def scatterplot():
+            color = input.scatter_color()
+            return px.scatter(
+                tips_data(),
+                x="total_bill",
+                y="tip",
+                color=None if color == "none" else color,
+                trendline="lowess",
+            )
+
+    with ui.card(full_screen=True):
+        with ui.card_header(class_="d-flex justify-content-between align-items-center"):
+            "Tip percentages"
+            with ui.popover(title="Add a color variable"):
+                ICONS["ellipsis"]
+                ui.input_radio_buttons(
+                    "tip_perc_y",
+                    "Split by:",
+                    ["sex", "smoker", "day", "time"],
+                    selected="day",
+                    inline=True,
+                )
+
+        @render_plotly
+        def tip_perc():
+            from ridgeplot import ridgeplot
+
+            dat = tips_data()
+            dat["percent"] = dat.tip / dat.total_bill
+            yvar = input.tip_perc_y()
+            uvals = dat[yvar].unique()
+
+            samples = [[dat.percent[dat[yvar] == val]] for val in uvals]
+
+            plt = ridgeplot(
+                samples=samples,
+                labels=uvals,
+                bandwidth=0.01,
+                colorscale="viridis",
+                colormode="row-index",
+            )
+
+            plt.update_layout(
+                legend=dict(
+                    orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5
+                )
+            )
+
+            return plt
+
+
+ui.include_css(app_dir / "styles.css")
+
+# --------------------------------------------------------
+# Reactive calculations and effects
+# --------------------------------------------------------
+
+
+@reactive.calc
+def tips_data():
+    bill = input.total_bill()
+    idx1 = tips.total_bill.between(bill[0], bill[1])
+    idx2 = tips.time.isin(input.time())
+    return tips[idx1 & idx2]
+
+@reactive.calc
+def groupme_data():
+    msg_total = input.groupme()
+    msg_total = groupme.groupby("name").agg(
+        message_count=("message_count", "sum"),
+        favorite_count=("favorite_count", "sum"),
+    ).reset_index()
+    return msg_total
+
+
+@reactive.effect
+@reactive.event(input.reset)
+def _():
+    ui.update_slider("total_bill", value=date_rng)
+    ui.update_checkbox_group("time", selected=["Messages", "Likes"])
