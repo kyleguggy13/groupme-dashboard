@@ -61,6 +61,17 @@ with ui.nav_panel("Page 2"):
             def data_groupnames():
                 df_GroupNames = dict_events['group.name_change']
                 df_GroupNames['days_ago'] = (pd.to_datetime("now") - pd.to_datetime(df_GroupNames["created_at"])).dt.days
+                
+                for i in range(len(df_GroupNames['days_ago'])):
+                    # Calculate days_active based on the difference between the current and previous days_ago values
+                    if i == 0:
+                        days_active = df_GroupNames['days_ago'][i]
+                        # print(f"days_active: {days_active}")
+                    else:
+                        days_active = df_GroupNames['days_ago'][i] - df_GroupNames['days_ago'][i-1]
+                        # print(f"days_active: {days_active}")
+                    
+                    df_GroupNames.loc[i, 'days_active'] = days_active
 
 
-                return df_GroupNames[["created_at", "days_ago", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False)
+                return df_GroupNames[["created_at", "days_ago", "days_active", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False)
