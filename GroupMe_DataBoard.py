@@ -65,11 +65,16 @@ for x in range(len(df_users_unique)):
 df_message_count = df_message['user_id'].value_counts().to_frame().reset_index()
 df_message_count.columns = ['user_id', 'message_count']
 df_users_unique = df_users_unique.merge(df_message_count, on='user_id')
-# df_message_count = df_message_count.merge(df_users_unique, on='user_id')
+
 
 # Count of favorites received per message
+import ast
+# Convert the string to a Python list safely
+df_message['favorited_by'] = df_message['favorited_by'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+
+# Now count properly
 df_message['favorite_count'] = df_message['favorited_by'].apply(lambda x: len(x))
-df_message['favorite_count'].value_counts().sort_index()
+# df_message['favorite_count'].value_counts().sort_index()
 
 # Sum of favorites received per user
 df_favorite_count = df_message.groupby('user_id')['favorite_count'].sum().sort_values(ascending=False).to_frame().reset_index()
