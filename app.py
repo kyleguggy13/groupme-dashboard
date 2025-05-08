@@ -61,4 +61,4 @@ with ui.nav_panel("Page 2"):
             def data():
                 df_GroupNames = dict_events['group.name_change']
 
-                return df_GroupNames[["created_at", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False)
+                return render.DataTable(df_GroupNames[["created_at", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False))
