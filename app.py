@@ -53,3 +53,11 @@ with ui.nav_panel("Page 1"):
 
 with ui.nav_panel("Page 2"):
     "This is the second 'page'."
+    # with ui.navset_card_underline(title="Group Names", footer=footer):
+    #     with ui.nav_panel("Table"):
+
+    #         @render.data_frame
+    #         def data():
+    #             df_GroupNames = df_message.groupby("group_name").size().reset_index(name="message_count")
+    #             df_GroupNames["message_count"] = df_GroupNames["message_count"].astype(int)
+    #             return df_GroupNames[["name", "user_id", "message_count", "favorite_count", "Average Likes Per Message"]]
