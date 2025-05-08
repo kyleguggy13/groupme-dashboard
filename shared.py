@@ -1,9 +1,18 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import ast
+
+
+def parse_dict(x):
+    try:
+        return ast.literal_eval(x)
+    except (ValueError, SyntaxError):
+        return x
+
 
 app_dir = Path(__file__).parent
-groupme = pd.read_csv(app_dir / "exported_messages.csv")
+groupme = pd.read_csv(app_dir / "exported_messages.csv", converters={"event": parse_dict})
 forbidden_users = pd.read_csv(app_dir / "forbidden_user_ids.csv")
 
 def show_values(axs, orient="v", space=.01):

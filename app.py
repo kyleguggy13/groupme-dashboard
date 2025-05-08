@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 
 # Load data and compute static values
-from shared import app_dir, groupme, show_values
+from shared import app_dir, groupme
 from shiny.express import input, render, ui
 from GroupMe_DataBoard import df_message, df_users_unique, dict_events
 
