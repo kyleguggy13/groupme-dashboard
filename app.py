@@ -52,7 +52,7 @@ with ui.nav_panel("Page 1"):
             
 
 with ui.nav_panel("Page 2"):
-    "This is the second 'page'."
+    "Group Name list to come."
     # with ui.navset_card_underline(title="Group Names", footer=footer):
     #     with ui.nav_panel("Table"):
 
