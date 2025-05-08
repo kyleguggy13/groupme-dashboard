@@ -1,5 +1,3 @@
-import os
-import csv
 import pandas as pd
 from pathlib import PurePath
 import matplotlib.pyplot as plt
@@ -14,17 +12,6 @@ from shared import app_dir, groupme, forbidden_users
 df_message = groupme
 df_forbidden_users = forbidden_users
 
-# message = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\GroupMe Export\00001\11739362\message.json"  
-# conversation = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\GroupMe Export\00001\11739362\conversation.json"
-# likes_everyone = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\GroupMe Export\00001\11739362\likes\everyone.json"
-# forbidden_users = r"C:\Users\kyleg\OneDrive\Documents\Friend's Group Chat\forbidden_user_ids.csv"
-
-
-
-# df_message = pd.read_json(message)
-# df_conversation = pd.read_json(conversation)
-# df_likes_everyone = pd.read_json(likes_everyone)
-# df_forbidden_users = pd.read_csv(forbidden_users)
 
 
 df_message[['user_id', 'id']] = df_message[['user_id', 'id']].astype(str)
@@ -71,10 +58,9 @@ df_users_unique = df_users_unique.merge(df_message_count, on='user_id')
 import ast
 # Convert the string to a Python list safely
 df_message['favorited_by'] = df_message['favorited_by'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-
 # Now count properly
 df_message['favorite_count'] = df_message['favorited_by'].apply(lambda x: len(x))
-# df_message['favorite_count'].value_counts().sort_index()
+
 
 # Sum of favorites received per user
 df_favorite_count = df_message.groupby('user_id')['favorite_count'].sum().sort_values(ascending=False).to_frame().reset_index()
@@ -100,32 +86,3 @@ def export_to_csv(df, file_path):
 
 # Example usage
 # export_to_csv(df_message, r"C:\Users\kyleg\OneDrive\Python\GroupMe DataBoard\exported_messages.csv")
-
-
-
-
-
-### SEABORN PLOT ###
-def seabornplot(df_data):
-    sns.set_theme(style="whitegrid")
-
-    # Initialize the matplotlib figure
-    f, ax = plt.subplots(figsize=(6,15))
-
-    # Plot the messages
-    sns.set_color_codes("pastel")
-    sns.barplot(x="message_count", y="name", data=df_data, label="Messages", color="b")
-
-    # Plot the favorites
-    sns.set_color_codes("muted")
-    sns.barplot(x="favorite_count", y="name", data=df_data, label="Favorites", color="b", width=0.25)
-
-    # Add a legend, informative axis label, and bar data labels
-    ax.legend(ncol=2, loc="lower right", frameon=True)
-    ax.bar_label(ax.containers[0], fmt="{:,.0f}", label_type='edge')
-    # ax.bar_label(ax.containers[1], fmt="{:,.0f}")
-    ax.set(ylabel="", xlabel="Messages and Favorites")
-    sns.despine(left=True, bottom=True)
-
-
-# seabornplot(df_users_unique)
