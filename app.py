@@ -10,7 +10,7 @@ from GroupMe_DataBoard import df_message, df_users_unique, dict_events
 
 
 ### Page title
-ui.page_opts(title="GroupMe DataBoard", fillable=True)
+ui.page_opts(title="GroupMe DataBoard")
 
 ### Push the navbar items to the right
 ui.nav_spacer()
@@ -54,11 +54,11 @@ with ui.nav_panel("Page 1"):
 
 with ui.nav_panel("Page 2"):
     "Group Name list to come."
-    with ui.navset_card_underline(title="Group Names", footer=footer):
+    with ui.navset_card_underline(title="Group Names"):
         with ui.nav_panel("Table"):
 
             @render.data_frame
-            def data():
+            def data_groupnames():
                 df_GroupNames = dict_events['group.name_change']
 
                 return df_GroupNames[["created_at", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False)
