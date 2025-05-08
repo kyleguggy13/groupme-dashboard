@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 # Load data and compute static values
 from shared import app_dir, groupme, show_values
 from shiny.express import input, render, ui
-from GroupMe_DataBoard import df_message, df_users_unique
+from GroupMe_DataBoard import df_message, df_users_unique, dict_events
+
 
 ### Page title
 ui.page_opts(title="GroupMe DataBoard")
@@ -53,11 +54,11 @@ with ui.nav_panel("Page 1"):
 
 with ui.nav_panel("Page 2"):
     "Group Name list to come."
-    # with ui.navset_card_underline(title="Group Names", footer=footer):
-    #     with ui.nav_panel("Table"):
+    with ui.navset_card_underline(title="Group Names", footer=footer):
+        with ui.nav_panel("Table"):
 
-    #         @render.data_frame
-    #         def data():
-    #             df_GroupNames = df_message.groupby("group_name").size().reset_index(name="message_count")
-    #             df_GroupNames["message_count"] = df_GroupNames["message_count"].astype(int)
-    #             return df_GroupNames[["name", "user_id", "message_count", "favorite_count", "Average Likes Per Message"]]
+            @render.data_frame
+            def data():
+                df_GroupNames = dict_events['group.name_change']
+
+                return df_GroupNames[["created_at", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False)

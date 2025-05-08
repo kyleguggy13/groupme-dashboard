@@ -1,12 +1,5 @@
 import pandas as pd
-from pathlib import PurePath
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import matplotlib.colors as mcolors
-import matplotlib.ticker as ticker
-from pandas.plotting import register_matplotlib_converters
-import seaborn as sns
-from shared import app_dir, groupme, forbidden_users
+from shared import groupme, forbidden_users
 
 
 df_message = groupme
@@ -68,6 +61,19 @@ df_users_unique = df_users_unique.merge(df_favorite_count, on='user_id')
 
 
 df_users_unique['Average Likes Per Message'] = df_users_unique['favorite_count'] / df_users_unique['message_count']
+
+
+# Expand the 'event' column into separate columns
+event_data = df_message_system['event'].apply(pd.Series)
+
+events = event_data['type'].unique()
+
+dict_events = {}
+for event in events:
+    df = df_message_system.loc[event_data['type'] == event].reset_index(drop=True)
+    df_e = pd.json_normalize(df['event'])
+    dict_events[event] = df.merge(df_e, left_index=True, right_index=True)
+
 
 
 def export_to_csv(df, file_path):
