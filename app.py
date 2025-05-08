@@ -60,5 +60,7 @@ with ui.nav_panel("Page 2"):
             @render.data_frame
             def data_groupnames():
                 df_GroupNames = dict_events['group.name_change']
+                df_GroupNames['days_ago'] = (pd.to_datetime("now") - pd.to_datetime(df_GroupNames["created_at"])).dt.days
 
-                return df_GroupNames[["created_at", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False)
+
+                return df_GroupNames[["created_at", "days_ago", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False)
