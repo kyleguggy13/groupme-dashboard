@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # Load data and compute static values
 from shared import app_dir, groupme
 from shiny.express import input, render, ui
-from GroupMe_DataBoard import df_message, df_users_unique, dict_events
+from GroupMe_DataBoard import df_message, df_users_unique, dict_events, df_usernames, count_messages, count_favorites
 
 
 ### Page title
@@ -14,6 +14,9 @@ ui.page_opts(title="GroupMe DataBoard")
 
 ### Push the navbar items to the right
 ui.nav_spacer()
+startdate = str(pd.to_datetime(df_message["created_at"].min()).date())
+enddate = str(pd.to_datetime(df_message["created_at"].max()).date())
+header =  ui.input_date_range("daterange", "Date Range", start=startdate, end=enddate)
 
 ### Select variable to display
 footer = ui.input_select(
@@ -22,25 +25,38 @@ footer = ui.input_select(
 
 
 with ui.nav_panel("Page 1"):
-    with ui.navset_card_underline(title="Messages and Favorites", footer=footer):
+    # ui.input_date_range("daterange", "Date Range")
+    with ui.navset_card_underline(title="Messages and Favorites", header=header, footer=footer):
         with ui.nav_panel("Plot"):
 
             @render.plot
             def hist():
-                # p = sns.barplot(
-                #     df_users_unique, 
-                #     x=input.var(), 
-                #     y="name", 
-                #     orient="h", 
-                #     facecolor="#007bc2", 
-                #     edgecolor="white")
+                date1 = str(input.daterange()[0])
+                date2 = str(input.daterange()[1])
+
+                print(f"Date range: {date1} to {date2}")
+                print(type(date1), type(date2))
+
+                df_message_filtered = df_message.loc[(df_message['created_at'] >= date1) & (df_message['created_at'] <= date2)]
+
+                df_count = df_usernames.merge(count_messages(df_message_filtered))
+
+                df_count = df_count.merge(count_favorites(df_message_filtered))
+                df_count['Average Likes Per Message'] = df_count['favorite_count'] / df_count['message_count']
+
+
+                # df_count = df_message_filtered['user_id'].value_counts().to_frame().reset_index()
+                # df_count.columns = ['user_id', 'message_count']
+                # df_plot = df_usernames.merge(df_count, on='user_id')
+
+
                 first = input.var()[0]
                 second = input.var()[1] if len(input.var()) > 1 else None
                 
                 if len(input.var()) == 1:
-                    pp = df_users_unique.plot(x="name", y=first, kind="barh")
+                    pp = df_count.plot(x="name", y=first, kind="barh")
                 else:
-                    pp = df_users_unique.plot(x="name", y=[first, second], kind="barh")
+                    pp = df_count.plot(x="name", y=[first, second], kind="barh")
                 
                 return pp
             
