@@ -49,7 +49,8 @@ with ui.nav_panel("Page 1"):
             @render.data_frame
             def data():
                 df_users_unique["Average Likes Per Message"] = df_users_unique["Average Likes Per Message"].round(2)
-                return df_users_unique[["name", "user_id", "message_count", "favorite_count", "Average Likes Per Message"]]
+                data_columns = ["name", "user_id", "message_count", "favorite_count", "Average Likes Per Message"]
+                return df_users_unique[data_columns]
             
 
 with ui.nav_panel("Page 2"):
@@ -73,5 +74,24 @@ with ui.nav_panel("Page 2"):
                     
                     df_GroupNames.loc[i, 'days_active'] = days_active
 
+                    data_columns = ["created_at", "days_ago", "days_active", "data.name", "data.user.nickname"]
 
-                return df_GroupNames[["created_at", "days_ago", "days_active", "data.name", "data.user.nickname"]].sort_values(by="created_at", ascending=False)
+                return df_GroupNames[data_columns].sort_values(by="created_at", ascending=False)
+
+# with ui.nav_panel("Page 3"):
+#     with ui.navset_card_underline(title="User Metrics"):
+#         with ui.nav_panel("Plot"):
+#             @render.plot
+#             def plot_user_metrics():
+#                 # Create a bar plot of the number of messages sent per year
+#                 df_message["created_at"] = pd.to_datetime(df_message["created_at"])
+#                 df_message["year"] = df_message["created_at"].dt.year
+
+#                 # p = sns.barplot(
+#                 #     data=df_message['user_id'] == 
+#                 #     x="year",
+#                 #     y="message_count",
+#                 #     palette="Set2",
+#                 #     dodge=True,
+#                 # )
+#                 return p
