@@ -14,6 +14,8 @@ ui.page_opts(title="GroupMe DataBoard")
 
 ### Push the navbar items to the right
 ui.nav_spacer()
+
+### Select date range
 startdate = str(pd.to_datetime(df_message["created_at"].min()).date())
 enddate = str(pd.to_datetime(df_message["created_at"].max()).date())
 header =  ui.input_date_range("daterange", "Date Range", start=startdate, end=enddate)
@@ -24,8 +26,7 @@ footer = ui.input_select(
 )
 
 
-with ui.nav_panel("Page 1"):
-    # ui.input_date_range("daterange", "Date Range")
+with ui.nav_panel("Msg & Fav"):
     with ui.navset_card_underline(title="Messages and Favorites", header=header, footer=footer):
         with ui.nav_panel("Plot"):
 
@@ -34,8 +35,8 @@ with ui.nav_panel("Page 1"):
                 date1 = str(input.daterange()[0])
                 date2 = str(input.daterange()[1])
 
-                print(f"Date range: {date1} to {date2}")
-                print(type(date1), type(date2))
+                # print(f"Date range: {date1} to {date2}")
+                # print(type(date1), type(date2))
 
                 df_message_filtered = df_message.loc[(df_message['created_at'] >= date1) & (df_message['created_at'] <= date2)]
 
@@ -43,11 +44,6 @@ with ui.nav_panel("Page 1"):
 
                 df_count = df_count.merge(count_favorites(df_message_filtered))
                 df_count['Average Likes Per Message'] = df_count['favorite_count'] / df_count['message_count']
-
-
-                # df_count = df_message_filtered['user_id'].value_counts().to_frame().reset_index()
-                # df_count.columns = ['user_id', 'message_count']
-                # df_plot = df_usernames.merge(df_count, on='user_id')
 
 
                 first = input.var()[0]
@@ -69,8 +65,7 @@ with ui.nav_panel("Page 1"):
                 return df_users_unique[data_columns]
             
 
-with ui.nav_panel("Page 2"):
-    "Group Name list to come."
+with ui.nav_panel("Group Names"):
     with ui.navset_card_underline(title="Group Names"):
         with ui.nav_panel("Table"):
 
