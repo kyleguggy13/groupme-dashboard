@@ -89,20 +89,19 @@ with ui.nav_panel("Group Names"):
 
                 return df_GroupNames[data_columns].sort_values(by="created_at", ascending=False)
 
-# with ui.nav_panel("Page 3"):
-#     with ui.navset_card_underline(title="User Metrics"):
-#         with ui.nav_panel("Plot"):
-#             @render.plot
-#             def plot_user_metrics():
-#                 # Create a bar plot of the number of messages sent per year
-#                 df_message["created_at"] = pd.to_datetime(df_message["created_at"])
-#                 df_message["year"] = df_message["created_at"].dt.year
+with ui.nav_panel("The Years"):
+    with ui.navset_card_underline(title="Yearly Metrics"):
+        with ui.nav_panel("Plot"):
+            @render.plot
+            def plot_user_metrics():
+                # Create a bar plot of the number of messages sent per year
+                df_message["created_at"] = pd.to_datetime(df_message["created_at"])
+                df_message["year"] = df_message["created_at"].dt.year
 
-#                 # p = sns.barplot(
-#                 #     data=df_message['user_id'] == 
-#                 #     x="year",
-#                 #     y="message_count",
-#                 #     palette="Set2",
-#                 #     dodge=True,
-#                 # )
-#                 return p
+                df_years = df_message.groupby("year").size().reset_index(name="message_count")
+
+                pp = df_years.plot(x="year", y="message_count", kind="bar")
+                pp.bar_label(pp.containers[0])
+                
+
+                return pp
