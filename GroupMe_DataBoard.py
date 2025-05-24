@@ -86,8 +86,8 @@ def count_favorites(df):
     Returns:
     pd.DataFrame: A DataFrame with user IDs and their corresponding favorite counts.
     """
-    df_favorite_count = df.groupby('user_id')['favorite_count'].sum().sort_values(ascending=False).to_frame().reset_index()
-    return df_favorite_count
+    df_fav_count = df.groupby('user_id')['favorite_count'].sum().sort_values(ascending=False).to_frame().reset_index()
+    return df_fav_count
 
 df_favorite_count = df_message.groupby('user_id')['favorite_count'].sum().sort_values(ascending=False).to_frame().reset_index()
 df_users_unique = df_users_unique.merge(df_favorite_count, on='user_id')

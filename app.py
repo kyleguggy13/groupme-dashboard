@@ -86,8 +86,8 @@ with ui.nav_panel("Group Names"):
                     df_GroupNames.loc[i, 'days_active'] = days_active
 
                     data_columns = ["created_at", "days_ago", "days_active", "data.name", "data.user.nickname"]
-
-                return df_GroupNames[data_columns].sort_values(by="created_at", ascending=False)
+                    # df_GroupNames[data_columns].sort_values(by="created_at", ascending=False)
+                return render.DataTable(df_GroupNames[data_columns])
 
 with ui.nav_panel("The Years"):
     with ui.navset_card_underline(title="Yearly Metrics"):
