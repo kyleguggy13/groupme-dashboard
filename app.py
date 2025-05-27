@@ -52,7 +52,9 @@ with ui.nav_panel("Msg & Fav"):
                 if len(input.var()) == 1:
                     pp = df_count.plot(x="name", y=first, kind="barh")
                 else:
-                    pp = df_count.plot(x="name", y=[first, second], kind="barh")
+                    pp = df_count.plot(x="name", y=[first, second], kind="barh",)
+                
+                pp.grid(axis='x', linestyle='--', linewidth=0.5, color='gray')
                 
                 return pp
             
@@ -87,7 +89,7 @@ with ui.nav_panel("Group Names"):
 
                     data_columns = ["created_at", "days_ago", "days_active", "data.name", "data.user.nickname"]
                     # df_GroupNames[data_columns].sort_values(by="created_at", ascending=False)
-                return render.DataTable(df_GroupNames[data_columns])
+                return render.DataTable(df_GroupNames[data_columns], width="100%",)
 
 with ui.nav_panel("The Years"):
     with ui.navset_card_underline(title="Yearly Metrics"):
