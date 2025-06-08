@@ -62,7 +62,19 @@ with ui.nav_panel("Msg & Fav"):
 
             @render.data_frame
             def data():
-                df_users_unique["Average Likes Per Message"] = df_users_unique["Average Likes Per Message"].round(2)
+                date1 = str(input.daterange()[0])
+                date2 = str(input.daterange()[1])
+
+                df_message_filtered = df_message.loc[(df_message['created_at'] >= date1) & (df_message['created_at'] <= date2)]
+
+                df_count = df_usernames.merge(count_messages(df_message_filtered))
+
+                df_count = df_count.merge(count_favorites(df_message_filtered))
+                df_count['Average Likes Per Message'] = df_count['favorite_count'] / df_count['message_count']
+
+                df_users_unique["Average Likes Per Message"] = df_count["Average Likes Per Message"].round(2)
+                df_users_unique['message_count'] = df_count['message_count']
+                df_users_unique['favorite_count'] = df_count['favorite_count']
                 data_columns = ["name", "user_id", "message_count", "favorite_count", "Average Likes Per Message"]
                 return df_users_unique[data_columns]
             
