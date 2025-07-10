@@ -22,7 +22,7 @@ header =  ui.input_date_range("daterange", "Date Range", start=startdate, end=en
 
 ### Select variable to display
 footer = ui.input_select(
-    "var", "Select variable", choices=["message_count", "favorite_count"], multiple=True, selected=["message_count"]
+    "var", "Select variable", choices=["message_count", "favorite_count"], multiple=True, selected=["message_count", "favorite_count"]
 )
 
 
