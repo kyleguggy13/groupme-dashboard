@@ -20,6 +20,13 @@ startdate = str(pd.to_datetime(df_message["created_at"].min()).date())
 enddate = str(pd.to_datetime(df_message["created_at"].max()).date())
 header =  ui.input_date_range("daterange", "Date Range", start=startdate, end=enddate)
 
+
+### Date range for Averages tab
+startdate_avg = str(pd.to_datetime(df_message["created_at"].min()).date())
+enddate_avg = str(pd.to_datetime(df_message["created_at"].max()).date())
+header_avg =  ui.input_date_range("daterange_avg", "Date Range", start=startdate_avg, end=enddate_avg)
+
+
 ### Select variable to display
 footer = ui.input_select(
     "var", "Select variable", choices=["message_count", "favorite_count"], multiple=True, selected=["message_count", "favorite_count"]
@@ -62,8 +69,8 @@ with ui.nav_panel("Msg & Fav"):
 
             @render.data_frame
             def data():
-                date1 = str(input.daterange()[0])
-                date2 = str(input.daterange()[1])
+                date1 = str(input.daterange_avg()[0])
+                date2 = str(input.daterange_avg()[1])
 
                 df_message_filtered = df_message.loc[(df_message['created_at'] >= date1) & (df_message['created_at'] <= date2)]
 
@@ -77,7 +84,56 @@ with ui.nav_panel("Msg & Fav"):
                 df_users_unique['favorite_count'] = df_count['favorite_count']
                 data_columns = ["name", "user_id", "message_count", "favorite_count", "Average Likes Per Message"]
                 return df_users_unique[data_columns]
-            
+
+
+with ui.nav_panel("Averages"):
+    with ui.navset_card_underline(title="Average Messages and Favorites", header=header_avg):
+        with ui.nav_panel("Plot"):
+
+            @render.plot
+            def avg_plot():
+                # Parse date range from input and ensure datetimes
+                date1 = pd.to_datetime(input.daterange()[0])
+                date2 = pd.to_datetime(input.daterange()[1])
+
+                # Copy and ensure created_at is datetime
+                df = df_message.copy()
+                df['created_at'] = pd.to_datetime(df['created_at'])
+
+                # Filter by selected date range
+                df = df.loc[(df['created_at'] >= date1) & (df['created_at'] <= date2)]
+
+                # Handle empty data
+                if df.empty:
+                    fig, ax = plt.subplots()
+                    ax.text(0.5, 0.5, "No data for selected date range", ha="center", va="center")
+                    ax.axis("off")
+                    return fig
+
+                # Group by month and user, pivot so each user is a column
+                df['month'] = df['created_at'].dt.to_period('M').dt.to_timestamp()
+                df_counts = df.groupby(['month', 'user_id']).size().reset_index(name='message_count')
+                df_pivot = df_counts.pivot(index='month', columns='user_id', values='message_count').fillna(0)
+
+                # Map user_id to display names using df_usernames
+                if 'user_id' in df_usernames.columns and 'name' in df_usernames.columns:
+                    id_to_name = df_usernames.set_index('user_id')['name'].to_dict()
+                    df_pivot.rename(columns=id_to_name, inplace=True)
+
+                # Plot lines for each user
+                fig, ax = plt.subplots(figsize=(10, 6))
+                df_pivot.plot(ax=ax, marker='o', linewidth=1)
+
+                ax.set_xlabel("Month")
+                ax.set_ylabel("Messages")
+                ax.set_title("Messages per Month by User")
+                ax.grid(axis='y', linestyle='--', linewidth=0.5, color='gray')
+                ax.legend(title="User", bbox_to_anchor=(1.02, 1), loc="upper left")
+                fig.autofmt_xdate()
+                plt.tight_layout()
+
+                return fig 
+
 
 with ui.nav_panel("Group Names"):
     with ui.navset_card_underline(title="Group Names"):
