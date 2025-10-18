@@ -21,10 +21,6 @@ enddate = str(pd.to_datetime(df_message["created_at"].max()).date())
 header =  ui.input_date_range("daterange", "Date Range", start=startdate, end=enddate)
 
 
-### Date range for Averages tab
-startdate_avg = str(pd.to_datetime(df_message["created_at"].min()).date())
-enddate_avg = str(pd.to_datetime(df_message["created_at"].max()).date())
-header_avg =  ui.input_date_range("daterange_avg", "Date Range", start=startdate_avg, end=enddate_avg)
 
 
 ### Select variable to display
@@ -87,7 +83,7 @@ with ui.nav_panel("Msg & Fav"):
 
 
 with ui.nav_panel("Averages"):
-    with ui.navset_card_underline(title="Average Messages and Favorites", header=header_avg):
+    with ui.navset_card_underline(title="Average Messages and Favorites", header=header):
         with ui.nav_panel("Plot"):
 
             @render.plot
