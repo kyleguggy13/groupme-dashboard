@@ -29,8 +29,10 @@ footer = ui.input_select(
 )
 
 
+#____________________________________________________ MSG & FAV PANEL
 with ui.nav_panel("Msg & Fav"):
     with ui.navset_card_underline(title="Messages and Favorites", header=header, footer=footer):
+        #____________________________________________________ GRAPH PANEL INSIDE MSG & FAV
         with ui.nav_panel("Plot"):
 
             @render.plot
@@ -60,13 +62,16 @@ with ui.nav_panel("Msg & Fav"):
                 pp.grid(axis='x', linestyle='--', linewidth=0.5, color='gray')
                 
                 return pp
-            
+        
+        #____________________________________________________ TABLE PANEL INSIDE MSG & FAV
         with ui.nav_panel("Table"):
 
             @render.data_frame
             def data():
-                date1 = str(input.daterange_avg()[0])
-                date2 = str(input.daterange_avg()[1])
+                # date1 = str(input.daterange_avg()[0])
+                # date2 = str(input.daterange_avg()[1])
+                date1 = str(input.daterange()[0])
+                date2 = str(input.daterange()[1])
 
                 df_message_filtered = df_message.loc[(df_message['created_at'] >= date1) & (df_message['created_at'] <= date2)]
 
@@ -82,6 +87,7 @@ with ui.nav_panel("Msg & Fav"):
                 return df_users_unique[data_columns]
 
 
+#____________________________________________________ AVERAGES PANEL
 with ui.nav_panel("Averages"):
     with ui.navset_card_underline(title="Average Messages and Favorites", header=header):
         with ui.nav_panel("Plot"):
@@ -131,8 +137,9 @@ with ui.nav_panel("Averages"):
                 return fig 
 
 
+#____________________________________________________ GROUP NAMES PANEL
 with ui.nav_panel("Group Names"):
-    with ui.navset_card_underline(title="Group Names"):
+    with ui.navset_card_underline(title="Group Names (Select Colomn Header To Sort)"):
         with ui.nav_panel("Table"):
 
             @render.data_frame
@@ -155,6 +162,7 @@ with ui.nav_panel("Group Names"):
                     # df_GroupNames[data_columns].sort_values(by="created_at", ascending=False)
                 return render.DataTable(df_GroupNames[data_columns], width="100%",)
 
+#____________________________________________________ THE YEARS PANEL
 with ui.nav_panel("The Years"):
     with ui.navset_card_underline(title="Yearly Metrics"):
         with ui.nav_panel("Plot"):
