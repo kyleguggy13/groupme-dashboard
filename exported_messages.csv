@@ -1,5 +1,4 @@
 created_at,favorited_by,id,name,sender_id,source_guid,user_id,reactions,event,updated_at,deleted_at,deletion_actor,year
-<<<<<<< HEAD
 2026-01-08 21:07:27,[],176790644776816832,John Gladiator - From Gladiator II,8816642,android-2f370eec-7eba-4cff-bcd6-bb3ce8be1e6c,8816642,,,,,,2026
 2026-01-08 21:07:01,[],176790642123015200,John Gladiator - From Gladiator II,8816642,android-c2498940-5627-4ec1-a97a-c56d71705cc3,8816642,,,,,,2026
 2026-01-08 19:49:13,['14436039'],176790175302119808,#1 Bird Dad,8816637,android-9a7fbf40-a31e-471c-ae4a-96258298cfb6,8816637,"[{'type': 'emoji', 'pack_id': '20', 'pack_index': '38', 'user_ids': ['14436039']}]",,,,,2026
@@ -323,10 +322,6 @@ created_at,favorited_by,id,name,sender_id,source_guid,user_id,reactions,event,up
 2025-12-08 22:25:08,[],176523270895348736,Bobson Dugnutt,8816567,android-6602563f-17f6-4ac7-a8a9-4d5045d60e7c,8816567,,,,,,2025
 2025-12-06 14:55:37,['53590153'],176503293760967744,Hay,8816641,8275627E-AC33-47EA-8234-C333F4EE23A5,8816641,"[{'type': 'emoji', 'pack_id': '20', 'pack_index': '38', 'user_ids': ['53590153']}]",,,,,2025
 2025-12-06 05:33:00,"['14436039', '24782532', '8816638', '8816641']",176499918021221312,Pikachu Hentai,27627709,android-cd4f952e-5eeb-4844-a2f0-1a485f3cf1ea,27627709,"[{'type': 'emoji', 'pack_id': '20', 'pack_index': '38', 'user_ids': ['14436039', '24782532', '8816638', '8816641']}]",,,,,2025
-=======
-2025-12-06 14:55:37,['53590153'],176503293760967744,Hay,8816641,8275627E-AC33-47EA-8234-C333F4EE23A5,8816641,"[{'type': 'emoji', 'pack_id': '20', 'pack_index': '38', 'user_ids': ['53590153']}]",,,,,2025
-2025-12-06 05:33:00,"['24782532', '8816638', '8816641']",176499918021221312,Pikachu Hentai,27627709,android-cd4f952e-5eeb-4844-a2f0-1a485f3cf1ea,27627709,"[{'type': 'emoji', 'pack_id': '20', 'pack_index': '38', 'user_ids': ['24782532', '8816638', '8816641']}]",,,,,2025
->>>>>>> 91a69aaeda2a26f795bf0bd44059a16d9969d283
 2025-12-06 00:29:42,['8816642'],176498098224555872,Joenuh,97404827,972672DF-7CBA-4560-80A9-4A61F6A30B71,97404827,"[{'type': 'unicode', 'user_ids': ['8816642'], 'code': '❤️'}]",,,,,2025
 2025-12-06 00:03:32,[],176497941257325824,John Gladiator - From Gladiator II,8816642,android-88299d33-dc45-4814-8394-041058912672,8816642,,,,,,2025
 2025-12-06 00:03:21,[],176497940147766496,John Gladiator - From Gladiator II,8816642,android-270b5a8e-01c5-4ed4-a1a3-7f4c062ce636,8816642,,,,,,2025
