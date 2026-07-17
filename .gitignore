@@ -1,1 +1,14 @@
-__pycache__/GroupMe_DataBoard.cpython-312.pyc
+__pycache__/
+*.py[cod]
+.next/
+node_modules/
+.env
+.env.local
+.env.*.local
+coverage/
+playwright-report/
+test-results/
+exported_messages.csv
+forbidden_user_ids.csv
+message.json
+*.groupme.zip

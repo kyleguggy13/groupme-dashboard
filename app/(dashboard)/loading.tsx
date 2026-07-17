@@ -1,0 +1,1 @@
+export default function DashboardLoading() { return <div className="page-wrap"><div className="skeleton" style={{height:54,width:"48%",borderRadius:15,marginBottom:22}}/><div className="skeleton" style={{height:350,borderRadius:30}}/><div className="stats-grid">{[1,2,3,4].map((item)=><div className="skeleton" style={{height:132,borderRadius:21}} key={item}/>)}</div></div>; }
