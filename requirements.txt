@@ -1,6 +1,0 @@
-shiny
-seaborn
-pandas
-matplotlib
-numpy
-faicons
