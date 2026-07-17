@@ -3,6 +3,7 @@ import "@fontsource-variable/bricolage-grotesque";
 import "@fontsource-variable/inter";
 import "./globals.css";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { RegisterServiceWorker } from "@/components/register-service-worker";
 import { Analytics } from "@/components/analytics";
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <RegisterServiceWorker />
         <Analytics measurementId={process.env.NEXT_PUBLIC_GA_ID} />
         <VercelAnalytics />
+        <SpeedInsights />
       </body>
     </html>
   );
