@@ -4,7 +4,16 @@ import { isDemoMode } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import type { DashboardData, GroupHistoryEvent, RankingDto, Viewer } from "@/lib/types";
 
-export async function getDashboardData(viewer: Viewer, period?: string, customFrom?: string, customTo?: string, timelineMemberId?: string): Promise<DashboardData> {
+type DashboardDataScope = "full" | "rankings" | "timeline" | "member";
+
+export async function getDashboardData(
+  viewer: Viewer,
+  period?: string,
+  customFrom?: string,
+  customTo?: string,
+  timelineMemberId?: string,
+  scope: DashboardDataScope = "full",
+): Promise<DashboardData> {
   if (isDemoMode) {
     const window = resolvePeriod(period, demoData.availableYears, customFrom, customTo);
     if (!timelineMemberId) return { ...demoData, activePeriodLabel: window.label };
@@ -17,14 +26,35 @@ export async function getDashboardData(viewer: Viewer, period?: string, customFr
   const years = ((yearsRaw ?? []) as Array<{ year: number }>).map((row) => Number(row.year)).sort((a, b) => b - a);
   const window = resolvePeriod(period, years, customFrom, customTo);
   const args = { p_group_id: viewer.groupId, p_from: window.from, p_to: window.to };
+  const needsSummary = scope === "full";
+  const needsTrend = scope === "full" || scope === "timeline" || scope === "member";
+  const needsHistory = scope === "full" || scope === "timeline";
   const [summaryResult, rankingsResult, trendResult, historyResult] = await Promise.all([
-    supabase.rpc("get_recap_summary", args),
+    needsSummary ? supabase.rpc("get_recap_summary", args) : Promise.resolve({ data: null, error: null }),
     supabase.rpc("get_rankings", args),
-    supabase.rpc("get_timeline", { ...args, p_bucket: "month", p_member_ids: timelineMemberId ? [timelineMemberId] : null }),
-    supabase.rpc("get_group_history", args),
+    needsTrend
+      ? supabase.rpc("get_timeline", { ...args, p_bucket: "month", p_member_ids: timelineMemberId ? [timelineMemberId] : null })
+      : Promise.resolve({ data: null, error: null }),
+    needsHistory ? supabase.rpc("get_group_history", args) : Promise.resolve({ data: null, error: null }),
   ]);
-  const failed = [summaryResult, rankingsResult, trendResult, historyResult].find((result) => result.error);
-  if (failed?.error) throw new Error(failed.error.message);
+  const results = [
+    ["get_recap_summary", summaryResult],
+    ["get_rankings", rankingsResult],
+    ["get_timeline", trendResult],
+    ["get_group_history", historyResult],
+  ] as const;
+  const failed = results.find(([, result]) => result.error);
+  if (failed?.[1].error) {
+    const [rpc, result] = failed;
+    console.error("Dashboard RPC failed", {
+      rpc,
+      code: result.error.code,
+      message: result.error.message,
+      details: result.error.details,
+      hint: result.error.hint,
+    });
+    throw new Error(`${rpc} failed: ${result.error.message}`);
+  }
   const summary = Array.isArray(summaryResult.data) ? summaryResult.data[0] : summaryResult.data;
   const rankings = (rankingsResult.data ?? []) as RankingDto[];
   const reactionTotals = rankings.reduce<Record<string, number>>((totals, row) => {

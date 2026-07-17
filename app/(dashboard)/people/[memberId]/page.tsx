@@ -10,7 +10,7 @@ import { getViewer } from "@/lib/auth";
 export default async function MemberPage({ params }: { params: Promise<{ memberId: string }> }) {
   const viewer = await getViewer();
   const { memberId } = await params;
-  const data = await getDashboardData(viewer, undefined, undefined, undefined, memberId);
+  const data = await getDashboardData(viewer, undefined, undefined, undefined, memberId, "member");
   const member = data.members.find((item) => item.id === memberId);
   if (!member) notFound();
   const colors=["#ff6b72","#7868e6","#ffad5b","#51c9a5"];
