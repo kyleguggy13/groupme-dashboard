@@ -7,10 +7,11 @@ import { getDashboardData } from "@/lib/dashboard-data";
 import { compactNumber, formatRate } from "@/lib/format";
 import { getViewer } from "@/lib/auth";
 
-export default async function MemberPage({ params }: { params: Promise<{ memberId: string }> }) {
+export default async function MemberPage({ params, searchParams }: { params: Promise<{ memberId: string }>; searchParams: Promise<{ period?: string; from?: string; to?: string }> }) {
   const viewer = await getViewer();
   const { memberId } = await params;
-  const data = await getDashboardData(viewer, undefined, undefined, undefined, memberId, "member");
+  const { period, from, to } = await searchParams;
+  const data = await getDashboardData(viewer, period, from, to, memberId, "member");
   const member = data.members.find((item) => item.id === memberId);
   if (!member) notFound();
   const colors=["#ff6b72","#7868e6","#ffad5b","#51c9a5"];

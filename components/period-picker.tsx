@@ -41,7 +41,7 @@ export function PeriodPicker({ years }: { years: number[] }) {
             navigate(next);
           }}
         >
-          <option value="latest">Latest year</option>
+          <option value="latest">Year To Date</option>
           {years.map((year) => <option key={year} value={year}>{year}</option>)}
           <option value="all">All time</option>
           <option value="custom">Custom dates</option>
