@@ -13,7 +13,7 @@ The local `.env.local` enables fictional demo data so every screen can be review
 
 ## Production setup
 
-1. Create a Supabase project and apply `supabase/migrations/202607170001_initial_schema.sql` with the Supabase CLI or SQL editor.
+1. Create a Supabase project and apply every SQL file in `supabase/migrations` in filename order with the Supabase CLI or SQL editor.
 2. Configure Google OAuth in Google Cloud and Supabase. Add the production origin and `/auth/callback` URL to the appropriate allowlists.
 3. Copy `.env.example` into the deployment environment, set `NEXT_PUBLIC_DEMO_MODE=false`, and provide the Supabase URL, publishable key, service-role key, site URL, and `INITIAL_ADMIN_EMAIL`.
 4. Deploy the Next.js project to Vercel, visit `/setup` while signed into the configured Google account, and create the first group.
